@@ -39,7 +39,7 @@
 
 __version__ = "1.3"
 
-class DIFError(StandardError):
+class DIFError():
     pass
 
 class DIF:
@@ -62,10 +62,10 @@ class DIF:
                     file.readline()
                 else:
                     line = line.lower()
-                    n = map(int, file.readline().rstrip().split(","))
+                    n = list(map(int, file.readline().rstrip().split(",")))
                     s = file.readline().strip()[1:-1]
                     n.append(s)
-                    if self.header.has_key(line):
+                    if line in self.header:
                         if type(self.header[line]) is type(()):
                             self.header[line] = [ self.header[line], tuple(n) ]
                         else:
@@ -94,21 +94,21 @@ class DIF:
                         tup = []
                         return
                     else:
-                        raise DIFError, "Invalid Special Data Value [%s]" % strv
+                        raise DIFError("Invalid Special Data Value [%s]" % strv)
                 elif nums[0] == 0:
                     if strv == "V" or strv == "TRUE" or strv == "FALSE":
                         tup.append(nums[1])
                     elif strv == "NA" or strv == "ERROR":
                         tup.append(None)
                     else:
-                        raise DIFError, "Invalid Numeric Data Type [%s]" % strv
+                        raise DIFError("Invalid Numeric Data Type [%s]" % strv)
                 elif nums[0] == 1:
                     strv = strv.strip()
                     if strv[0:1] == '"':
                         strv = strv[1:-1]
                     tup.append(strv)
                 else:
-                    raise DIFError, "Invalid Type Indicator [%d]" % nums[0]
+                    raise DIFError("Invalid Type Indicator [%d]" % nums[0])
             line = file.readline().rstrip().upper()
 
     def __len__(self):
